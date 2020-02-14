@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  plugin:
+    image: node:12.15.0-alpine3.11
+    working_dir: /plugin
+    command: yarn run start
+    volumes:
+      - .:/plugin:cached
+      - ./node_modules:/plugin/node_modules
+    environment:
+      NODE_ENV: "${NODE_ENV:-development}"
+
+volumes:
+  node_modules:
