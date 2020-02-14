@@ -1,9 +1,16 @@
 import {SettingsData} from './settings';
 
+const PLUGIN_DATA_KEY = 'hecvr/status';
+
+const COMPONENT_VERSION = 1;
+
 const DEFAULT_COLOR: RGB = {r: 0, g: 0, b: 0};
 const DEFAULT_FONT_NAME: FontName = {family: 'Roboto', style: 'Regular'};
 
-const PLUGIN_DATA_KEY = 'hecvr/status';
+interface ComponentData {
+  version?: number;
+  id?: string;
+}
 
 interface InstanceData {
   status?: string;
@@ -11,13 +18,15 @@ interface InstanceData {
 }
 
 const getComponent = async (): Promise<ComponentNode> => {
-  const componentId = figma.root.getPluginData(PLUGIN_DATA_KEY);
-  
-  let component = figma.getNodeById(componentId) as ComponentNode;
-  if (component) {
+  const data = JSON.parse(figma.root.getPluginData(PLUGIN_DATA_KEY) || '{}') as ComponentData;
+
+  let component = figma.getNodeById(data.id) as ComponentNode;
+  if (data.version === COMPONENT_VERSION) {
     return component;
   }
-
+  if (component) {
+    component.remove();
+  }
   component = figma.createComponent();
   component.resize(320, 588);
   component.name = 'Status';
