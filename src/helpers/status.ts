@@ -21,7 +21,7 @@ const getComponent = async (): Promise<ComponentNode> => {
   const data = JSON.parse(figma.root.getPluginData(PLUGIN_DATA_KEY) || '{}') as ComponentData;
 
   let component = figma.getNodeById(data.id) as ComponentNode;
-  if (data.version === COMPONENT_VERSION) {
+  if (component && data.version === COMPONENT_VERSION) {
     return component;
   }
   if (component) {
@@ -75,7 +75,8 @@ const getComponent = async (): Promise<ComponentNode> => {
   component.appendChild(borders);
 
   // set plugin data for root
-  figma.root.setPluginData(PLUGIN_DATA_KEY, component.id);
+  figma.root.setPluginData(PLUGIN_DATA_KEY,
+                           JSON.stringify({version: COMPONENT_VERSION, id: component.id}));
 
   return component;
 };
@@ -98,8 +99,8 @@ const updateInstance = async (settings: SettingsData, status: string, instance: 
   borders.strokes = [{type: 'SOLID', color}];
 };
 
-const set = async (settings: SettingsData, status: string, node: SceneNode): Promise<void> => {
-  const rawData = node.getPluginData(PLUGIN_DATA_KEY);
+const set = async (settings: SettingsData, status: string, frame: FrameNode): Promise<void> => {
+  const rawData = frame.getPluginData(PLUGIN_DATA_KEY);
   let data: InstanceData = {};
   if (rawData) {
     data = JSON.parse(rawData) as InstanceData;
@@ -114,18 +115,18 @@ const set = async (settings: SettingsData, status: string, node: SceneNode): Pro
 
     // create instance
     instance = component.createInstance();
-    instance.resize(node.width + 20, node.height + 50);
-    instance.x = node.x - 10;
-    instance.y = node.y - 40;
+    instance.resize(frame.width + 20, frame.height + 50);
+    instance.x = -10;
+    instance.y = -40;
     // update component instance
     await updateInstance(settings, status, instance);
 
-    // add component instance to node's parent
-    (node.parent || figma.currentPage).appendChild(instance);
+    // add component instance to frame
+    frame.appendChild(instance);
   }
 
   // set plugin data for node
-  node.setPluginData(PLUGIN_DATA_KEY, JSON.stringify({status, id: instance.id}));
+  frame.setPluginData(PLUGIN_DATA_KEY, JSON.stringify({status, id: instance.id}));
 };
 
 export default { set };
