@@ -2,8 +2,6 @@ import {SettingsData} from './settings';
 
 const PLUGIN_DATA_KEY = 'hecvr/status';
 
-const COMPONENT_VERSION = 1;
-
 const DEFAULT_COLOR: RGB = {r: 0, g: 0, b: 0};
 const DEFAULT_FONT_NAME: FontName = {family: 'Roboto', style: 'Regular'};
 
@@ -18,14 +16,9 @@ interface InstanceData {
 }
 
 const getComponent = async (): Promise<ComponentNode> => {
-  const data = JSON.parse(figma.root.getPluginData(PLUGIN_DATA_KEY) || '{}') as ComponentData;
-
-  let component = figma.getNodeById(data.id) as ComponentNode;
-  if (component && data.version === COMPONENT_VERSION) {
-    return component;
-  }
+  let component = figma.getNodeById(figma.root.getPluginData(PLUGIN_DATA_KEY)) as ComponentNode;
   if (component) {
-    component.remove();
+    return component;
   }
   component = figma.createComponent();
   component.resize(320, 588);
@@ -75,8 +68,7 @@ const getComponent = async (): Promise<ComponentNode> => {
   component.appendChild(borders);
 
   // set plugin data for root
-  figma.root.setPluginData(PLUGIN_DATA_KEY,
-                           JSON.stringify({version: COMPONENT_VERSION, id: component.id}));
+  figma.root.setPluginData(PLUGIN_DATA_KEY, component.id);
 
   return component;
 };
@@ -118,6 +110,7 @@ const set = async (settings: SettingsData, status: string, frame: FrameNode): Pr
     instance.resize(frame.width + 20, frame.height + 50);
     instance.x = -10;
     instance.y = -40;
+    instance.constraints = {horizontal: 'STRETCH', vertical: 'STRETCH'};
     // update component instance
     await updateInstance(settings, status, instance);
 
