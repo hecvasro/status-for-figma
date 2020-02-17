@@ -1,6 +1,6 @@
 {
-  "name": "status",
-  "version": "1.3.0",
+  "name": "frame-status",
+  "version": "1.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {

@@ -1,6 +1,6 @@
 {
-  "name": "Status ✅",
-  "id": "742769304454952644",
+  "name": "Frame Status",
+  "id": "811381661295562811",
   "api": "1.0.0",
   "main": "dist/plugin.js",
   "ui": "dist/ui.html",
