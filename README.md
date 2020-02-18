@@ -1,4 +1,4 @@
-# Frame Status
+![Frame Status](./cover.png)
 
 Statuses for Frames on Figma.
 
