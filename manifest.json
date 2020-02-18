@@ -1,22 +1,14 @@
 {
-  "name": "Status ✅",
-  "id": "742769304454952644",
+  "name": "Frame Status",
+  "id": "811381661295562811",
   "api": "1.0.0",
   "main": "dist/plugin.js",
   "ui": "dist/ui.html",
-  "menu": [{
-    "name": "Work in progress",
-    "command": "wip"
-  }, {
-    "name": "Ready for review",
-    "command": "ready-for-review"
-  }, {
-    "name": "Done",
-    "command": "done"
-  }, {
-    "separator": true
-  }, {
-    "name": "Settings…",
-    "command": "settings"
-  }]
+  "menu": [
+    {"name": "In Progress", "command": "in-progress"},
+    {"name": "Pending Review", "command": "pending-review"},
+    {"name": "Changes Requested", "command": "changes-requested"},
+    {"name": "Done", "command": "done"},
+    {"separator": true}
+  ]
 }
