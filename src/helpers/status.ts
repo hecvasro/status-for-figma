@@ -5,16 +5,6 @@ const PLUGIN_DATA_KEY = 'hecvr/status';
 const DEFAULT_COLOR: RGB = {r: 0, g: 0, b: 0};
 const DEFAULT_FONT_NAME: FontName = {family: 'Roboto', style: 'Regular'};
 
-interface ComponentData {
-  version?: number;
-  id?: string;
-}
-
-interface InstanceData {
-  status?: string;
-  id?: string;
-}
-
 const updateComponent = async (component: ComponentNode): Promise<void> => {
   // unlock component
   component.locked = false;
@@ -125,10 +115,7 @@ const set = async (settings: SettingsData, status: string, frame: FrameNode): Pr
   // disable content clipping on frame
   frame.clipsContent = false;
 
-  // create or update instance
-  const data = JSON.parse(frame.getPluginData(PLUGIN_DATA_KEY) || '{}') as InstanceData;
-
-  let instance = figma.getNodeById(data.id) as InstanceNode;
+  let instance = frame.findOne((node) => node.name === 'Status') as InstanceNode;
   if (!instance) {
     const component = await getComponent();
 
@@ -146,9 +133,6 @@ const set = async (settings: SettingsData, status: string, frame: FrameNode): Pr
   instance.y = -42;
 
   await updateInstance(settings, status, instance);
-
-  // set plugin data for node
-  frame.setPluginData(PLUGIN_DATA_KEY, JSON.stringify({status, id: instance.id}));
 };
 
 export default { set };
