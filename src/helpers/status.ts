@@ -3,7 +3,16 @@ import {SettingsData} from './settings';
 const PLUGIN_DATA_KEY = 'hecvr/status';
 
 const DEFAULT_COLOR: RGB = {r: 0, g: 0, b: 0};
-const DEFAULT_FONT_NAME: FontName = {family: 'Roboto', style: 'Regular'};
+const DEFAULT_FONT_NAME: FontName = {family: "Roboto", style: "Bold"};
+
+const findOrCreateComponentsPage = (): PageNode => {
+  let page = figma.root.findOne((node) => node.type === 'PAGE' && node.name === 'Components') as PageNode;
+  if (!page) {
+    page = figma.createPage();
+    page.name = 'Components';
+  }
+  return page;
+};
 
 const updateComponent = async (component: ComponentNode): Promise<void> => {
   // unlock component
@@ -13,7 +22,6 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
   component.resize(375, 812);
   component.backgrounds = [];
   component.constraints = {horizontal: 'STRETCH', vertical: 'STRETCH'};
-  // component.visible = false;
 
   // update badge
   const badge = component.findOne((node) => node.name === 'Status Badge') as GroupNode;
@@ -29,6 +37,7 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
 
   const badgeText = badge.findOne((node) => node.name === 'Status Badge Text') as TextNode;
   badgeText.resize(160, 32);
+  badgeText.fontName = DEFAULT_FONT_NAME;
   badgeText.textAlignHorizontal = 'CENTER';
   badgeText.textAlignVertical = 'CENTER';
   badgeText.textCase = 'UPPER';
@@ -40,7 +49,7 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
   borders.resize(375, 780);
   borders.y = 32;
   borders.fills = [];
-  borders.strokes = [{type: 'SOLID', color: {r: 1, g: 1, b: 1}}];
+  borders.strokes = [{type: 'SOLID', color: DEFAULT_COLOR}];
   borders.strokeAlign = 'INSIDE';
   borders.strokeWeight = 10;
   borders.cornerRadius = 4.0;
@@ -51,10 +60,10 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
   component.locked = true;
 };
 
-const getComponent = async (): Promise<ComponentNode> => {
+const findOrCreateComponent = async (): Promise<ComponentNode> => {
   let component = figma.getNodeById(figma.root.getPluginData(PLUGIN_DATA_KEY)) as ComponentNode;
-
   if (!component) {
+    // create component
     component = figma.createComponent();
     component.name = 'Status';
 
@@ -75,6 +84,12 @@ const getComponent = async (): Promise<ComponentNode> => {
     borders.name = 'Status Borders';
 
     component.appendChild(borders);
+  }
+
+  if (!component.parent || component.parent.name !== 'Components') {
+    // add component to components page
+    const page = findOrCreateComponentsPage();
+    page.appendChild(component);
   }
 
   // update component
@@ -110,6 +125,7 @@ const updateInstance = async (settings: SettingsData, status: string, instance: 
 };
 
 const set = async (settings: SettingsData, status: string, frame: FrameNode): Promise<void> => {
+  // load font
   await figma.loadFontAsync(DEFAULT_FONT_NAME);
 
   // disable content clipping on frame
@@ -117,7 +133,7 @@ const set = async (settings: SettingsData, status: string, frame: FrameNode): Pr
 
   let instance = frame.findOne((node) => node.name === 'Status') as InstanceNode;
   if (!instance) {
-    const component = await getComponent();
+    const component = await findOrCreateComponent();
 
     // create instance
     instance = component.createInstance();
@@ -135,4 +151,12 @@ const set = async (settings: SettingsData, status: string, frame: FrameNode): Pr
   await updateInstance(settings, status, instance);
 };
 
-export default { set };
+const remove = async (frame: FrameNode): Promise<void> => {
+  const instance = frame.findOne((node) => node.name === 'Status') as InstanceNode;
+  if (instance) {
+    instance.remove();
+  }
+  return;
+};
+
+export default { set, remove };

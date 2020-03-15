@@ -9,6 +9,7 @@
     {"name": "Pending Review", "command": "pending-review"},
     {"name": "Changes Requested", "command": "changes-requested"},
     {"name": "Done", "command": "done"},
-    {"separator": true}
+    {"separator": true},
+    {"name": "Remove Status", "command": "remove-status"}
   ]
 }
