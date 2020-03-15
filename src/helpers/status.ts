@@ -49,7 +49,7 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
   borders.resize(375, 780);
   borders.y = 32;
   borders.fills = [];
-  borders.strokes = [{type: 'SOLID', color: {r: 1, g: 1, b: 1}}];
+  borders.strokes = [{type: 'SOLID', color: DEFAULT_COLOR}];
   borders.strokeAlign = 'INSIDE';
   borders.strokeWeight = 10;
   borders.cornerRadius = 4.0;
