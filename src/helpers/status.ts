@@ -5,6 +5,15 @@ const PLUGIN_DATA_KEY = 'hecvr/status';
 const DEFAULT_COLOR: RGB = {r: 0, g: 0, b: 0};
 const DEFAULT_FONT_NAME: FontName = {family: 'Roboto', style: 'Regular'};
 
+const findOrCreateComponentsPage = (): PageNode => {
+  let page = figma.root.findOne((node) => node.type === 'PAGE' && node.name === 'Components') as PageNode;
+  if (!page) {
+    page = figma.createPage();
+    page.name = 'Components';
+  }
+  return page;
+};
+
 const updateComponent = async (component: ComponentNode): Promise<void> => {
   // unlock component
   component.locked = false;
@@ -51,10 +60,10 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
   component.locked = true;
 };
 
-const getComponent = async (): Promise<ComponentNode> => {
+const findOrCreateComponent = async (): Promise<ComponentNode> => {
   let component = figma.getNodeById(figma.root.getPluginData(PLUGIN_DATA_KEY)) as ComponentNode;
-
   if (!component) {
+    // create component
     component = figma.createComponent();
     component.name = 'Status';
 
@@ -75,6 +84,10 @@ const getComponent = async (): Promise<ComponentNode> => {
     borders.name = 'Status Borders';
 
     component.appendChild(borders);
+
+    // add component to components page
+    const page = findOrCreateComponentsPage();
+    page.appendChild(component);
   }
 
   // update component
@@ -117,7 +130,7 @@ const set = async (settings: SettingsData, status: string, frame: FrameNode): Pr
 
   let instance = frame.findOne((node) => node.name === 'Status') as InstanceNode;
   if (!instance) {
-    const component = await getComponent();
+    const component = await findOrCreateComponent();
 
     // create instance
     instance = component.createInstance();
