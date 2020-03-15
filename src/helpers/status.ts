@@ -3,7 +3,7 @@ import {SettingsData} from './settings';
 const PLUGIN_DATA_KEY = 'hecvr/status';
 
 const DEFAULT_COLOR: RGB = {r: 0, g: 0, b: 0};
-const DEFAULT_FONT_NAME: FontName = {family: 'Roboto', style: 'Regular'};
+const DEFAULT_FONT_NAME: FontName = {family: "Roboto", style: "Bold"};
 
 const findOrCreateComponentsPage = (): PageNode => {
   let page = figma.root.findOne((node) => node.type === 'PAGE' && node.name === 'Components') as PageNode;
@@ -37,6 +37,7 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
 
   const badgeText = badge.findOne((node) => node.name === 'Status Badge Text') as TextNode;
   badgeText.resize(160, 32);
+  badgeText.fontName = DEFAULT_FONT_NAME;
   badgeText.textAlignHorizontal = 'CENTER';
   badgeText.textAlignVertical = 'CENTER';
   badgeText.textCase = 'UPPER';
@@ -124,6 +125,7 @@ const updateInstance = async (settings: SettingsData, status: string, instance: 
 };
 
 const set = async (settings: SettingsData, status: string, frame: FrameNode): Promise<void> => {
+  // load font
   await figma.loadFontAsync(DEFAULT_FONT_NAME);
 
   // disable content clipping on frame
