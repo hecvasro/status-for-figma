@@ -22,7 +22,6 @@ const updateComponent = async (component: ComponentNode): Promise<void> => {
   component.resize(375, 812);
   component.backgrounds = [];
   component.constraints = {horizontal: 'STRETCH', vertical: 'STRETCH'};
-  // component.visible = false;
 
   // update badge
   const badge = component.findOne((node) => node.name === 'Status Badge') as GroupNode;
@@ -84,7 +83,9 @@ const findOrCreateComponent = async (): Promise<ComponentNode> => {
     borders.name = 'Status Borders';
 
     component.appendChild(borders);
+  }
 
+  if (!component.parent || component.parent.name !== 'Components') {
     // add component to components page
     const page = findOrCreateComponentsPage();
     page.appendChild(component);
