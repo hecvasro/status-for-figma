@@ -1,21 +1,26 @@
 import Settings, {SettingsData} from './helpers/settings';
 import Status from './helpers/status';
 
-const setStatus = async (settings: SettingsData, status: string): Promise<string> => {
-  const { selection } = figma.currentPage;
-  if (selection.length === 0) {
-    return Promise.resolve('Please select at least one element.');
+const framesAffected = (count: number) => `${count} ${count === 1 ? 'frame' : 'frames'} affected`;
+const handleCommand = async (settings: SettingsData, command: string): Promise<string> => {
+  const selection = figma.currentPage
+                         .selection
+                         .filter((node) => node.type === 'FRAME');
+  const selected = selection.length;
+  if (selected === 0) {
+    return 'Please select at least one frame.';
   }
-  return Promise.all(selection.map(async (node): Promise<string> => {
-                                if (node.type !== 'FRAME') {
-                                  return `Element '${node.name}' is not a frame, please select a frame.`;
-                                }
-                                return Status.set(settings, status, node as FrameNode)
-                                             .then(() => `Element '${node.name}' status is now '${settings.statuses[status].name}'.`);
-                              }))
-                .then((messages) => messages.join('; '));
+  switch (command) {
+    case 'remove-status':
+      return Promise.all(selection.map((frame: FrameNode) => Status.remove(frame)))
+                    .then(() => `Status removed, ${framesAffected(selected)}.`);
+    default:
+      const {name} = settings.statuses[command];
+      return Promise.all(selection.map((frame: FrameNode) => Status.set(settings, command, frame)))
+                    .then(() => `Status updated to '${name}', ${framesAffected(selected)}.`);
+  }
 };
 
 Settings.load()
-  .then((settings) => setStatus(settings, figma.command))
-  .then((message) => figma.closePlugin(message));
+        .then((settings) => handleCommand(settings, figma.command))
+        .then((message) => figma.closePlugin(message));

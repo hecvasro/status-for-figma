@@ -149,4 +149,12 @@ const set = async (settings: SettingsData, status: string, frame: FrameNode): Pr
   await updateInstance(settings, status, instance);
 };
 
-export default { set };
+const remove = async (frame: FrameNode): Promise<void> => {
+  const instance = frame.findOne((node) => node.name === 'Status') as InstanceNode;
+  if (instance) {
+    instance.remove();
+  }
+  return;
+};
+
+export default { set, remove };
