@@ -9,9 +9,9 @@ const defaults: SettingsData = {
     'in-progress': {name: 'In Progress', color: {r: 251/255, g: 140/255, b: 0}},
     'pending-review': {name: 'Pending Review', color: {r: 253/255, g: 216/255, b: 53/255}},
     'changes-requested': {name: 'Changes Requested', color: {r: 229/255, g: 57/255, b: 53/255}},
+    'done': {name: 'Done / Approved', color: {r: 67/255, g: 160/255, b: 71/255}},
     'ready-for-development': {name: 'Ready for Development', color: {r: 87/255, g: 67/255, b: 160/255}},
-    'in-production': {name: 'In Production', color: {r: 160/255, g: 67/255, b: 160/255}},
-    'done': {name: 'Done', color: {r: 67/255, g: 160/255, b: 71/255}}
+    'in-production': {name: 'In Production', color: {r: 160/255, g: 67/255, b: 160/255}}
   }
 };
 

@@ -8,7 +8,9 @@
     {"name": "In Progress", "command": "in-progress"},
     {"name": "Pending Review", "command": "pending-review"},
     {"name": "Changes Requested", "command": "changes-requested"},
-    {"name": "Done", "command": "done"},
+    {"name": "Done / Approved", "command": "done"},
+    {"name": "Ready for Development", "command": "ready-for-development"},
+    {"name": "In Production", "command": "in-production"},
     {"separator": true},
     {"name": "Remove Status", "command": "remove-status"}
   ]
